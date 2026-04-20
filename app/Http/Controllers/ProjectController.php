@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
 class ProjectController extends Controller
 {
     public function index(): Response
@@ -152,7 +153,8 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
-        $validated = $this->validateProject($request);
+        /*$validated = $this->validateProject($request);*/
+        $validated = $this->validateProject($request, $project);
 
         $project->update([
             'name' => $validated['name'],
@@ -178,20 +180,26 @@ class ProjectController extends Controller
             ->with('success', 'Progetto eliminato con successo.');
     }
 
-    private function validateProject(Request $request): array
-    {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'status' => ['required', Rule::in(['da_fare', 'in_corso', 'completato', 'sospeso'])],
-            'start_date' => ['nullable', 'date'],
-            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'client_ids' => ['nullable', 'array'],
-            'client_ids.*' => ['integer', 'exists:clients,id'],
-        ], [
-            'name.required' => 'Il nome progetto è obbligatorio.',
-            'status.required' => 'Lo stato è obbligatorio.',
-            'end_date.after_or_equal' => 'La data fine non può essere precedente alla data inizio.',
-        ]);
-    }
+   private function validateProject(Request $request, ?Project $project = null): array
+{
+    return $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('projects', 'name')->ignore($project?->id),
+        ],
+        'description' => ['nullable', 'string'],
+        'status' => ['required', Rule::in(['da_fare', 'in_corso', 'completato', 'sospeso'])],
+        'start_date' => ['nullable', 'date'],
+        'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+        'client_ids' => ['nullable', 'array'],
+        'client_ids.*' => ['integer', 'exists:clients,id'],
+    ], [
+        'name.required' => 'Il nome progetto è obbligatorio.',
+        'name.unique' => 'Esiste già un progetto con questo nome.',
+        'status.required' => 'Lo stato è obbligatorio.',
+        'end_date.after_or_equal' => 'La data fine non può essere precedente alla data inizio.',
+    ]);
+}
 }
