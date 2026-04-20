@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 import { dashboard } from '@/routes';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -54,7 +55,6 @@ defineOptions({
     },
 });
 
-
 const form = useForm({
     first_name: props.client.first_name ?? '',
     last_name: props.client.last_name ?? '',
@@ -65,6 +65,19 @@ const form = useForm({
     email: props.client.email ?? '',
     project_ids: props.client.project_ids ?? [],
 });
+
+watch(
+    () => form.type,
+    (newType) => {
+        if (newType === 'azienda') {
+            form.tax_code = '';
+        }
+
+        if (newType === 'privato') {
+            form.vat_number = '';
+        }
+    }
+);
 
 const submit = () => {
     form.put(`/clients/${props.client.id}`);
@@ -110,13 +123,13 @@ const submit = () => {
                         <small class="text-red-500">{{ form.errors.email }}</small>
                     </div>
 
-                    <div class="space-y-2">
+                    <div v-if="form.type === 'azienda'" class="space-y-2">
                         <label for="vat_number" class="block text-sm font-medium">Partita IVA</label>
                         <InputText id="vat_number" v-model="form.vat_number" class="w-full" />
                         <small class="text-red-500">{{ form.errors.vat_number }}</small>
                     </div>
 
-                    <div class="space-y-2">
+                    <div v-if="form.type === 'privato'" class="space-y-2">
                         <label for="tax_code" class="block text-sm font-medium">Codice fiscale</label>
                         <InputText id="tax_code" v-model="form.tax_code" class="w-full" />
                         <small class="text-red-500">{{ form.errors.tax_code }}</small>

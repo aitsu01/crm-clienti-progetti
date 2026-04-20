@@ -159,34 +159,46 @@ class ClientController extends Controller
     }
 
     private function validateClient(Request $request): array
-    {
-        return $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'type' => ['required', Rule::in(['privato', 'azienda'])],
-            'vat_number' => [
-                'nullable',
-                'string',
-                'max:50',
-                Rule::requiredIf(fn () => $request->input('type') === 'azienda'),
-            ],
-            'tax_code' => [
-                'nullable',
-                'string',
-                'max:50',
-                Rule::requiredIf(fn () => $request->input('type') === 'privato'),
-            ],
-            'address' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'project_ids' => ['nullable', 'array'],
-            'project_ids.*' => ['integer', 'exists:projects,id'],
-        ], [
-            'first_name.required' => 'Il nome è obbligatorio.',
-            'last_name.required' => 'Il cognome è obbligatorio.',
-            'type.required' => 'Il tipo cliente è obbligatorio.',
-            'vat_number.required' => 'La partita IVA è obbligatoria per le aziende.',
-            'tax_code.required' => 'Il codice fiscale è obbligatorio per i privati.',
-            'email.email' => 'Inserisci un indirizzo email valido.',
-        ]);
-    }
+{
+    return $request->validate([
+        'first_name' => ['required', 'string', 'max:255'],
+        'last_name' => ['required', 'string', 'max:255'],
+        'type' => ['required', Rule::in(['privato', 'azienda'])],
+
+        'vat_number' => [
+            'nullable',
+            'string',
+            'regex:/^[0-9]{11}$/',
+            Rule::requiredIf(fn () => $request->input('type') === 'azienda'),
+        ],
+
+        'tax_code' => [
+            'nullable',
+            'string',
+            'size:16',
+            'regex:/^[A-Z0-9]{16}$/i',
+            Rule::requiredIf(fn () => $request->input('type') === 'privato'),
+        ],
+
+        'address' => ['nullable', 'string', 'max:255'],
+        'email' => ['nullable', 'email', 'max:255'],
+        'project_ids' => ['nullable', 'array'],
+        'project_ids.*' => ['integer', 'exists:projects,id'],
+    ], [
+        'first_name.required' => 'Il nome è obbligatorio.',
+        'last_name.required' => 'Il cognome è obbligatorio.',
+        'type.required' => 'Il tipo cliente è obbligatorio.',
+        'type.in' => 'Il tipo cliente selezionato non è valido.',
+
+        'vat_number.required' => 'La partita IVA è obbligatoria per un cliente azienda.',
+        'vat_number.regex' => 'La partita IVA deve contenere esattamente 11 cifre numeriche.',
+
+        'tax_code.required' => 'Il codice fiscale è obbligatorio per un cliente privato.',
+        'tax_code.size' => 'Il codice fiscale deve essere lungo 16 caratteri.',
+        'tax_code.regex' => 'Il codice fiscale non ha un formato valido.',
+
+        'email.email' => 'Inserisci un indirizzo email valido.',
+        'project_ids.*.exists' => 'Uno dei progetti selezionati non esiste.',
+    ]);
+}
 }
