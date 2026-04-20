@@ -36,29 +36,30 @@ class TaskController extends Controller
     ]);
 }
 
-    public function create(): Response
-    {
-        $projects = Project::query()
-            ->select('id', 'name')
-            ->orderBy('name')
-            ->get();
+    public function create(Request $request): Response
+{
+    $projects = Project::query()
+        ->select('id', 'name')
+        ->orderBy('name')
+        ->get();
 
-        return Inertia::render('tasks/Create', [
-            'projects' => $projects,
-            'statuses' => [
-                ['label' => 'Da fare', 'value' => 'da_fare'],
-                ['label' => 'In corso', 'value' => 'in_corso'],
-                ['label' => 'In revisione', 'value' => 'in_revisione'],
-                ['label' => 'Completata', 'value' => 'completata'],
-                ['label' => 'Bloccata', 'value' => 'bloccata'],
-            ],
-            'priorities' => [
-                ['label' => 'Bassa', 'value' => 'bassa'],
-                ['label' => 'Media', 'value' => 'media'],
-                ['label' => 'Alta', 'value' => 'alta'],
-            ],
-        ]);
-    }
+    return Inertia::render('tasks/Create', [
+        'projects' => $projects,
+        'selectedProjectId' => $request->integer('project_id') ?: null,
+        'statuses' => [
+            ['label' => 'Da fare', 'value' => 'da_fare'],
+            ['label' => 'In corso', 'value' => 'in_corso'],
+            ['label' => 'In revisione', 'value' => 'in_revisione'],
+            ['label' => 'Completata', 'value' => 'completata'],
+            ['label' => 'Bloccata', 'value' => 'bloccata'],
+        ],
+        'priorities' => [
+            ['label' => 'Bassa', 'value' => 'bassa'],
+            ['label' => 'Media', 'value' => 'media'],
+            ['label' => 'Alta', 'value' => 'alta'],
+        ],
+    ]);
+}
 
     public function store(Request $request)
     {

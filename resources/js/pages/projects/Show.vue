@@ -49,13 +49,20 @@ defineOptions({
             <h1 class="text-2xl font-bold">{{ project.name }}</h1>
 
             <div class="flex gap-2">
-                <Link :href="`/projects/${project.id}/edit`">
-                    <Button label="Modifica" icon="pi pi-pencil" />
-                </Link>
-                <Link href="/projects">
-                    <Button label="Torna alla lista" severity="secondary" outlined />
-                </Link>
-            </div>
+    <Link :href="`/tasks/create?project_id=${project.id}`">
+        <Button label="Inserisci nuova task" icon="pi pi-plus" severity="success" />
+    </Link>
+
+    <Link :href="`/projects/${project.id}/edit`">
+        <Button label="Modifica" icon="pi pi-pencil" />
+    </Link>
+
+    <Link href="/projects">
+        <Button label="Torna alla lista" severity="secondary" outlined />
+    </Link>
+</div>
+
+
         </div>
 
         <Card>

@@ -21,6 +21,7 @@ const props = defineProps<{
     projects: ProjectOption[];
     statuses: OptionItem[];
     priorities: OptionItem[];
+    selectedProjectId: number | null;
 }>();
 
 defineOptions({
@@ -34,7 +35,7 @@ defineOptions({
 });
 
 const form = useForm({
-    project_id: null as number | null,
+    project_id: props.selectedProjectId ?? null,
     title: '',
     description: '',
     status: 'da_fare',
@@ -64,6 +65,7 @@ const submit = () => {
                             optionLabel="name"
                             optionValue="id"
                             class="w-full"
+                            placeholder="Seleziona un progetto"
                         />
                         <small class="text-red-500">{{ form.errors.project_id }}</small>
                     </div>
