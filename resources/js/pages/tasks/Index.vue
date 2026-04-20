@@ -184,61 +184,79 @@ const columnClasses = (status: string) => {
                 </div>
 
                 <div v-if="column.tasks.length" class="space-y-4">
+
                     <Card
-                        v-for="task in column.tasks"
-                        :key="task.id"
-                        class="cursor-grab rounded-2xl border shadow-sm active:cursor-grabbing"
-                        draggable="true"
-                        @dragstart="onDragStart(task.id)"
-                        @dragend="onDragEnd"
-                    >
-                        <template #title>
-                            <div class="space-y-1">
-                                <div class="text-sm text-muted-foreground">
-                                    {{ task.project?.name || 'Nessun progetto' }}
-                                </div>
-                                <div class="text-base font-semibold">
-                                    {{ task.title }}
-                                </div>
-                            </div>
-                        </template>
+    v-for="task in column.tasks"
+    :key="task.id"
+    class="h-full cursor-grab rounded-2xl border shadow-sm transition hover:shadow-md active:cursor-grabbing"
+    draggable="true"
+    @dragstart="onDragStart(task.id)"
+    @dragend="onDragEnd"
+>
+    <template #content>
+        <div class="flex min-h-[320px] flex-col gap-4">
+            <div>
+                <div class="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    {{ task.project?.name || 'Nessun progetto' }}
+                </div>
 
-                        <template #content>
-                            <div class="space-y-4">
-                                <p class="text-sm text-muted-foreground">
-                                    {{ task.description || 'Nessuna descrizione disponibile.' }}
-                                </p>
+                <h3 class="line-clamp-2 min-h-[3.5rem] text-base font-semibold leading-7">
+                    {{ task.title }}
+                </h3>
+            </div>
 
-                                <div class="flex flex-wrap gap-2">
-                                    <Tag :value="task.status" :severity="statusSeverity(task.status)" />
-                                    <Tag :value="task.priority" :severity="prioritySeverity(task.priority)" />
-                                    <Tag
-                                        v-if="task.due_date"
-                                        :value="`Scadenza: ${task.due_date}`"
-                                        severity="contrast"
-                                    />
-                                </div>
+            <p class="line-clamp-4 min-h-[6rem] text-sm leading-6 text-muted-foreground">
+                {{ task.description || 'Nessuna descrizione disponibile.' }}
+            </p>
 
-                                <div class="flex flex-wrap gap-2">
-                                    <Link :href="`/tasks/${task.id}`">
-                                        <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
-                                    </Link>
+            <div class="flex flex-wrap gap-2">
+                <Tag :value="task.status" :severity="statusSeverity(task.status)" />
+                <Tag :value="task.priority" :severity="prioritySeverity(task.priority)" />
+                <Tag
+                    v-if="task.due_date"
+                    :value="`Scadenza: ${task.due_date}`"
+                    severity="contrast"
+                />
+            </div>
 
-                                    <Link :href="`/tasks/${task.id}/edit`">
-                                        <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
-                                    </Link>
+            <div class="mt-auto grid grid-cols-3 gap-2 pt-2">
+                <Link :href="`/tasks/${task.id}`" class="w-full">
+                    <Button
+                        label="Vedi"
+                        icon="pi pi-eye"
+                        severity="secondary"
+                        size="small"
+                        class="w-full justify-center"
+                    />
+                </Link>
 
-                                    <Button
-                                        label="Elimina"
-                                        icon="pi pi-trash"
-                                        severity="danger"
-                                        size="small"
-                                        @click="destroyTask(task.id)"
-                                    />
-                                </div>
-                            </div>
-                        </template>
-                    </Card>
+                <Link :href="`/tasks/${task.id}/edit`" class="w-full">
+                    <Button
+                        label="Modifica"
+                        icon="pi pi-pencil"
+                        severity="info"
+                        size="small"
+                        class="w-full justify-center"
+                    />
+                </Link>
+
+                <Button
+                    label="Elimina"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    size="small"
+                    class="w-full justify-center"
+                    @click="destroyTask(task.id)"
+                />
+            </div>
+        </div>
+    </template>
+</Card>        
+                    
+                  
+
+
+
                 </div>
 
                 <div v-else class="text-sm text-muted-foreground">

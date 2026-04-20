@@ -37,7 +37,7 @@ watch(
 </script>
 
 <template>
-    <div class="space-y-4">
+    <div class="space-y-3">
         <Message
             v-if="success"
             severity="success"
@@ -55,7 +55,5 @@ watch(
         >
             {{ error }}
         </Message>
-
-        <slot />
     </div>
 </template>
