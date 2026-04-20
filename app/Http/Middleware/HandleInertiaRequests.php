@@ -33,7 +33,7 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
-    public function share(Request $request): array
+   /* public function share(Request $request): array
     {
         return [
             ...parent::share($request),
@@ -43,5 +43,19 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
-    }
+    }*/
+
+    public function share(Request $request): array
+{
+    return [
+        ...parent::share($request),
+        'flash' => [
+            'success' => fn () => $request->session()->get('success'),
+            'error' => fn () => $request->session()->get('error'),
+        ],
+    ];
+}
+
+
+
 }
