@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+
+import { Head, Link, router } from '@inertiajs/vue3';
+
+
 import { dashboard } from '@/routes';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
+
 
 type ClientItem = {
     id: number;
@@ -68,6 +72,15 @@ const prioritySeverity = (priority: string) => {
             return 'secondary';
     }
 };
+
+const destroyTask = (id: number) => {
+    if (confirm('Sei sicuro di voler eliminare questa task?')) {
+        router.delete(`/tasks/${id}`);
+    }
+};
+
+
+
 </script>
 
 <template>
@@ -152,14 +165,24 @@ const prioritySeverity = (priority: string) => {
                                 </div>
 
                                 <div class="flex flex-wrap gap-2 pt-2">
-                                    <Link :href="`/tasks/${task.id}`">
-                                        <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
-                                    </Link>
+    <Link :href="`/tasks/${task.id}`">
+        <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
+    </Link>
 
-                                    <Link :href="`/tasks/${task.id}/edit`">
-                                        <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
-                                    </Link>
-                                </div>
+    <Link :href="`/tasks/${task.id}/edit`">
+        <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
+    </Link>
+
+    <Button
+        label="Elimina"
+        icon="pi pi-trash"
+        severity="danger"
+        size="small"
+        @click="destroyTask(task.id)"
+    />
+</div>
+
+
                             </div>
                         </template>
                     </Card>
