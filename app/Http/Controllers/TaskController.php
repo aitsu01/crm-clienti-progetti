@@ -9,9 +9,10 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
 class TaskController extends Controller
 {
-   public function index(): Response
+  public function index(): Response
 {
     $tasks = Task::with('project:id,name')
         ->latest()
@@ -29,10 +30,18 @@ class TaskController extends Controller
                     'name' => $task->project->name,
                 ] : null,
             ];
-        });
+        })
+        ->values();
 
     return Inertia::render('tasks/Index', [
         'tasks' => $tasks,
+        'statuses' => [
+            ['label' => 'Da fare', 'value' => 'da_fare'],
+            ['label' => 'In corso', 'value' => 'in_corso'],
+            ['label' => 'In revisione', 'value' => 'in_revisione'],
+            ['label' => 'Completata', 'value' => 'completata'],
+            ['label' => 'Bloccata', 'value' => 'bloccata'],
+        ],
     ]);
 }
 
@@ -161,4 +170,29 @@ class TaskController extends Controller
             'priority.required' => 'La priorità è obbligatoria.',
         ]);
     }
+
+    public function updateStatus(Request $request, Task $task)
+{
+    $validated = $request->validate([
+        'status' => ['required', Rule::in([
+            'da_fare',
+            'in_corso',
+            'in_revisione',
+            'completata',
+            'bloccata',
+        ])],
+    ], [
+        'status.required' => 'Lo stato è obbligatorio.',
+        'status.in' => 'Lo stato selezionato non è valido.',
+    ]);
+
+    $task->update([
+        'status' => $validated['status'],
+    ]);
+
+    return back()->with('success', 'Stato task aggiornato con successo.');
+}
+
+
+
 }

@@ -16,6 +16,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('clients', ClientController::class);
     Route::resource('projects', ProjectController::class);
+
+    Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus'])
+        ->name('tasks.update-status');
     Route::resource('tasks', TaskController::class);
 });
 
