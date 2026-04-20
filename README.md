@@ -395,7 +395,3 @@ https://github.com/aitsu01/crm-clienti-progetti
 ```
 
 ---
-
-## Autore
-
-Progetto sviluppato da **Gianni** come applicazione gestionale CRM con Laravel, Inertia.js e PrimeVue.
