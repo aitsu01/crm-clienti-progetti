@@ -58,17 +58,24 @@ const statusSeverity = (status: string) => {
     <Head title="Progetti" />
 
     <div class="flex flex-1 flex-col gap-6 rounded-xl p-4">
+
+
         <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold">Progetti</h1>
-                <p class="text-sm text-muted-foreground">Gestione progetti e clienti associati</p>
-            </div>
+    <div>
+        <h1 class="text-2xl font-bold">Progetti</h1>
+        <p class="text-sm text-muted-foreground">Gestione progetti e clienti associati</p>
+    </div>
 
-            <Link href="/projects/create">
-                <Button label="Nuovo progetto" icon="pi pi-plus" />
-            </Link>
-        </div>
+    <div class="flex gap-2">
+        <Link href="/dashboard">
+            <Button label="Dashboard" icon="pi pi-home" severity="secondary" />
+        </Link>
 
+        <Link href="/projects/create">
+            <Button label="Nuovo progetto" icon="pi pi-plus" />
+        </Link>
+    </div>
+</div>
         <div class="rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
             <DataTable :value="projects" stripedRows paginator :rows="10">
                 <Column field="name" header="Nome" />
@@ -97,24 +104,28 @@ const statusSeverity = (status: string) => {
                 </Column>
 
                 <Column header="Azioni">
-                    <template #body="{ data }">
-                        <div class="flex gap-2">
-                            <Link :href="`/projects/${data.id}`">
-                                <Button icon="pi pi-eye" severity="secondary" rounded text />
-                            </Link>
-                            <Link :href="`/projects/${data.id}/edit`">
-                                <Button icon="pi pi-pencil" rounded text />
-                            </Link>
-                            <Button
-                                icon="pi pi-trash"
-                                severity="danger"
-                                rounded
-                                text
-                                @click="destroyProject(data.id)"
-                            />
-                        </div>
-                    </template>
-                </Column>
+    <template #body="{ data }">
+        <div class="flex gap-2">
+            <Link :href="`/projects/${data.id}`">
+                <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
+            </Link>
+
+            <Link :href="`/projects/${data.id}/edit`">
+                <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
+            </Link>
+
+            <Button
+                label="Elimina"
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                @click="destroyProject(data.id)"
+            />
+        </div>
+    </template>
+</Column>
+
+
             </DataTable>
         </div>
     </div>

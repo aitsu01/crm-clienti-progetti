@@ -111,24 +111,28 @@ const prioritySeverity = (priority: string) => {
                 <Column field="due_date" header="Scadenza" />
 
                 <Column header="Azioni">
-                    <template #body="{ data }">
-                        <div class="flex gap-2">
-                            <Link :href="`/tasks/${data.id}`">
-                                <Button icon="pi pi-eye" severity="secondary" rounded text />
-                            </Link>
-                            <Link :href="`/tasks/${data.id}/edit`">
-                                <Button icon="pi pi-pencil" rounded text />
-                            </Link>
-                            <Button
-                                icon="pi pi-trash"
-                                severity="danger"
-                                rounded
-                                text
-                                @click="destroyTask(data.id)"
-                            />
-                        </div>
-                    </template>
-                </Column>
+    <template #body="{ data }">
+        <div class="flex gap-2">
+            <Link :href="`/tasks/${data.id}`">
+                <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
+            </Link>
+
+            <Link :href="`/tasks/${data.id}/edit`">
+                <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
+            </Link>
+
+            <Button
+                label="Elimina"
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                @click="destroyTask(data.id)"
+            />
+        </div>
+    </template>
+</Column>
+
+
             </DataTable>
         </div>
     </div>
