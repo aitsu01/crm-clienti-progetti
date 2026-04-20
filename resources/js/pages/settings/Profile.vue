@@ -29,6 +29,7 @@ defineOptions({
     },
 });
 
+
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 </script>
