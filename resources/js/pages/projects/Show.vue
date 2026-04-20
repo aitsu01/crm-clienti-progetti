@@ -13,6 +13,7 @@ type ClientItem = {
 type TaskItem = {
     id: number;
     title: string;
+    description?: string | null;
     status: string;
     priority: string;
     due_date: string | null;
@@ -39,6 +40,34 @@ defineOptions({
         ],
     },
 });
+
+const statusSeverity = (status: string) => {
+    switch (status) {
+        case 'completata':
+        case 'completato':
+            return 'success';
+        case 'in_corso':
+            return 'info';
+        case 'in_revisione':
+        case 'sospeso':
+            return 'warn';
+        case 'bloccata':
+            return 'danger';
+        default:
+            return 'secondary';
+    }
+};
+
+const prioritySeverity = (priority: string) => {
+    switch (priority) {
+        case 'alta':
+            return 'danger';
+        case 'media':
+            return 'warn';
+        default:
+            return 'secondary';
+    }
+};
 </script>
 
 <template>
@@ -49,20 +78,18 @@ defineOptions({
             <h1 class="text-2xl font-bold">{{ project.name }}</h1>
 
             <div class="flex gap-2">
-    <Link :href="`/tasks/create?project_id=${project.id}`">
-        <Button label="Inserisci nuova task" icon="pi pi-plus" severity="success" />
-    </Link>
+                <Link :href="`/tasks/create?project_id=${project.id}`">
+                    <Button label="Inserisci nuova task" icon="pi pi-plus" severity="success" />
+                </Link>
 
-    <Link :href="`/projects/${project.id}/edit`">
-        <Button label="Modifica" icon="pi pi-pencil" />
-    </Link>
+                <Link :href="`/projects/${project.id}/edit`">
+                    <Button label="Modifica" icon="pi pi-pencil" />
+                </Link>
 
-    <Link href="/projects">
-        <Button label="Torna alla lista" severity="secondary" outlined />
-    </Link>
-</div>
-
-
+                <Link href="/projects">
+                    <Button label="Torna alla lista" severity="secondary" outlined />
+                </Link>
+            </div>
         </div>
 
         <Card>
@@ -71,7 +98,9 @@ defineOptions({
                     <div><strong>Stato:</strong> {{ project.status }}</div>
                     <div><strong>Data inizio:</strong> {{ project.start_date || '-' }}</div>
                     <div><strong>Data fine:</strong> {{ project.end_date || '-' }}</div>
-                    <div class="md:col-span-2"><strong>Descrizione:</strong> {{ project.description || '-' }}</div>
+                    <div class="md:col-span-2">
+                        <strong>Descrizione:</strong> {{ project.description || '-' }}
+                    </div>
                 </div>
             </template>
         </Card>
@@ -94,19 +123,55 @@ defineOptions({
         <Card>
             <template #title>Task progetto</template>
             <template #content>
-                <div v-if="project.tasks.length" class="space-y-3">
-                    <div
+                <div v-if="project.tasks.length" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <Card
                         v-for="task in project.tasks"
                         :key="task.id"
-                        class="rounded-lg border p-3"
+                        class="h-full"
                     >
-                        <div class="font-medium">{{ task.title }}</div>
-                        <div class="mt-1 text-sm text-gray-500">
-                            Stato: {{ task.status }} · Priorità: {{ task.priority }} · Scadenza: {{ task.due_date || '-' }}
-                        </div>
-                    </div>
+                        <template #title>
+                            <div class="text-lg font-semibold">
+                                {{ task.title }}
+                            </div>
+                        </template>
+
+                        <template #content>
+                            <div class="space-y-4">
+                                <p class="min-h-[72px] text-sm text-muted-foreground">
+                                    {{ task.description || 'Nessuna descrizione disponibile.' }}
+                                </p>
+
+                                <div class="flex flex-wrap gap-2">
+                                    <Tag :value="task.status" :severity="statusSeverity(task.status)" />
+                                    <Tag :value="task.priority" :severity="prioritySeverity(task.priority)" />
+                                    <Tag
+                                        v-if="task.due_date"
+                                        :value="`Scadenza: ${task.due_date}`"
+                                        severity="contrast"
+                                    />
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 pt-2">
+                                    <Link :href="`/tasks/${task.id}`">
+                                        <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
+                                    </Link>
+
+                                    <Link :href="`/tasks/${task.id}/edit`">
+                                        <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </template>
+                    </Card>
                 </div>
-                <p v-else>Nessuna task associata.</p>
+
+                <div v-else class="flex flex-col items-start gap-4">
+                    <p class="text-muted-foreground">Nessuna task associata.</p>
+
+                    <Link :href="`/tasks/create?project_id=${project.id}`">
+                        <Button label="Inserisci nuova task" icon="pi pi-plus" />
+                    </Link>
+                </div>
             </template>
         </Card>
     </div>

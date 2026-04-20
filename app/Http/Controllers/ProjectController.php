@@ -98,13 +98,19 @@ class ProjectController extends Controller
                     'id' => $client->id,
                     'full_name' => trim($client->first_name . ' ' . $client->last_name),
                 ])->values(),
+
                 'tasks' => $project->tasks->map(fn ($task) => [
-                    'id' => $task->id,
-                    'title' => $task->title,
-                    'status' => $task->status,
-                    'priority' => $task->priority,
-                    'due_date' => $task->due_date?->format('Y-m-d'),
-                ])->values(),
+    'id' => $task->id,
+    'title' => $task->title,
+    'description' => $task->description,
+    'status' => $task->status,
+    'priority' => $task->priority,
+    'due_date' => $task->due_date?->format('Y-m-d'),
+])->values(),
+
+                
+
+
             ],
         ]);
     }
