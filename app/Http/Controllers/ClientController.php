@@ -12,33 +12,32 @@ use Inertia\Response;
 class ClientController extends Controller
 {
     public function index(): Response
-    {
-        $clients = Client::with('projects:id,name')
-            ->latest()
-            ->get()
-            ->map(function (Client $client) {
-                return [
-                    'id' => $client->id,
-                    'first_name' => $client->first_name,
-                    'last_name' => $client->last_name,
-                    'full_name' => $client->full_name,
-                    'type' => $client->type,
-                    'vat_number' => $client->vat_number,
-                    'tax_code' => $client->tax_code,
-                    'address' => $client->address,
-                    'email' => $client->email,
-                    'projects' => $client->projects->map(fn ($project) => [
-                        'id' => $project->id,
-                        'name' => $project->name,
-                    ])->values(),
-                ];
-            });
+{
+    $clients = Client::with('projects:id,name')
+        ->latest()
+        ->get()
+        ->map(function (Client $client) {
+            return [
+                'id' => $client->id,
+                'first_name' => $client->first_name,
+                'last_name' => $client->last_name,
+                'full_name' => trim($client->first_name . ' ' . $client->last_name),
+                'type' => $client->type,
+                'vat_number' => $client->vat_number,
+                'tax_code' => $client->tax_code,
+                'address' => $client->address,
+                'email' => $client->email,
+                'projects' => $client->projects->map(fn ($project) => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ])->values(),
+            ];
+        });
 
-        return Inertia::render('clients/Index', [
-            'clients' => $clients,
-        ]);
-    }
-
+    return Inertia::render('clients/Index', [
+        'clients' => $clients,
+    ]);
+}
     public function create(): Response
     {
         $projects = Project::query()

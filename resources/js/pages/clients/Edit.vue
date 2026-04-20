@@ -48,11 +48,12 @@ defineOptions({
             },
             {
                 title: 'Modifica cliente',
-                href: `/clients/${props.client.id}/edit`,
+                href: '/clients',
             },
         ],
     },
 });
+
 
 const form = useForm({
     first_name: props.client.first_name ?? '',

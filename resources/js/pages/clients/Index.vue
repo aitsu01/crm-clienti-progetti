@@ -83,7 +83,15 @@ const typeSeverity = (type: string) => {
 
         <div class="rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
             <DataTable :value="clients" stripedRows paginator :rows="10" scrollable>
-                <Column field="full_name" header="Cliente" />
+
+                <Column header="Cliente">
+    <template #body="{ data }">
+        {{ data.first_name }} {{ data.last_name }}
+    </template>
+</Column>
+                
+
+
 
                 <Column header="Tipo">
                     <template #body="{ data }">
