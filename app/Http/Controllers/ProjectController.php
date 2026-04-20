@@ -180,7 +180,7 @@ class ProjectController extends Controller
             ->with('success', 'Progetto eliminato con successo.');
     }
 
-   private function validateProject(Request $request, ?Project $project = null): array
+    private function validateProject(Request $request, ?Project $project = null): array
 {
     return $request->validate([
         'name' => [
@@ -191,15 +191,18 @@ class ProjectController extends Controller
         ],
         'description' => ['nullable', 'string'],
         'status' => ['required', Rule::in(['da_fare', 'in_corso', 'completato', 'sospeso'])],
-        'start_date' => ['nullable', 'date'],
-        'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+        'start_date' => ['required', 'date'],
+        'end_date' => ['nullable', 'date', 'after:start_date'],
         'client_ids' => ['nullable', 'array'],
         'client_ids.*' => ['integer', 'exists:clients,id'],
     ], [
         'name.required' => 'Il nome progetto è obbligatorio.',
         'name.unique' => 'Esiste già un progetto con questo nome.',
         'status.required' => 'Lo stato è obbligatorio.',
-        'end_date.after_or_equal' => 'La data fine non può essere precedente alla data inizio.',
+        'start_date.required' => 'La data inizio è obbligatoria.',
+        'end_date.after' => 'La data fine deve essere successiva alla data inizio.',
     ]);
 }
+
+   
 }

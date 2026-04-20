@@ -34,12 +34,14 @@ defineOptions({
     },
 });
 
+const today = new Date().toISOString().split('T')[0];
+
 const form = useForm({
     name: '',
     description: '',
     status: 'da_fare',
-    start_date: null as string | null,
-    end_date: null as string | null,
+    start_date: today,
+    end_date: '',
     client_ids: [] as number[],
 });
 
