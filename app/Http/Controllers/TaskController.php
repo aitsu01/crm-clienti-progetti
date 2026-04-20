@@ -11,30 +11,30 @@ use Inertia\Response;
 
 class TaskController extends Controller
 {
-    public function index(): Response
-    {
-        $tasks = Task::with('project:id,name')
-            ->latest()
-            ->get()
-            ->map(function (Task $task) {
-                return [
-                    'id' => $task->id,
-                    'title' => $task->title,
-                    'description' => $task->description,
-                    'status' => $task->status,
-                    'priority' => $task->priority,
-                    'due_date' => $task->due_date?->format('Y-m-d'),
-                    'project' => $task->project ? [
-                        'id' => $task->project->id,
-                        'name' => $task->project->name,
-                    ] : null,
-                ];
-            });
+   public function index(): Response
+{
+    $tasks = Task::with('project:id,name')
+        ->latest()
+        ->get()
+        ->map(function (Task $task) {
+            return [
+                'id' => $task->id,
+                'title' => $task->title,
+                'description' => $task->description,
+                'status' => $task->status,
+                'priority' => $task->priority,
+                'due_date' => $task->due_date?->format('Y-m-d'),
+                'project' => $task->project ? [
+                    'id' => $task->project->id,
+                    'name' => $task->project->name,
+                ] : null,
+            ];
+        });
 
-        return Inertia::render('tasks/Index', [
-            'tasks' => $tasks,
-        ]);
-    }
+    return Inertia::render('tasks/Index', [
+        'tasks' => $tasks,
+    ]);
+}
 
     public function create(): Response
     {

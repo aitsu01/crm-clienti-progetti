@@ -2,8 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { dashboard } from '@/routes';
 import Button from 'primevue/button';
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
+import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 
 type ProjectItem = {
@@ -71,69 +70,94 @@ const prioritySeverity = (priority: string) => {
     <Head title="Task" />
 
     <div class="flex flex-1 flex-col gap-6 rounded-xl p-4">
-
-
         <div class="flex items-center justify-between">
-    <div>
-        <h1 class="text-2xl font-bold">Task</h1>
-        <p class="text-sm text-muted-foreground">Gestione attività dei progetti</p>
-    </div>
+            <div>
+                <h1 class="text-2xl font-bold">Task</h1>
+                <p class="text-sm text-muted-foreground">
+                    Gestione attività dei progetti
+                </p>
+            </div>
 
-    <div class="flex gap-2">
-        <Link href="/dashboard">
-            <Button label="Dashboard" icon="pi pi-home" severity="secondary" />
-        </Link>
+            <div class="flex gap-2">
+                <Link href="/dashboard">
+                    <Button label="Dashboard" icon="pi pi-home" severity="secondary" />
+                </Link>
 
-        <Link href="/tasks/create">
-            <Button label="Nuova task" icon="pi pi-plus" />
-        </Link>
-    </div>
-</div>
-
-        <div class="rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
-            <DataTable :value="tasks" stripedRows paginator :rows="10">
-                <Column field="title" header="Titolo" />
-                <Column header="Progetto">
-                    <template #body="{ data }">
-                        {{ data.project?.name || '-' }}
-                    </template>
-                </Column>
-                <Column header="Stato">
-                    <template #body="{ data }">
-                        <Tag :value="data.status" :severity="statusSeverity(data.status)" />
-                    </template>
-                </Column>
-                <Column header="Priorità">
-                    <template #body="{ data }">
-                        <Tag :value="data.priority" :severity="prioritySeverity(data.priority)" />
-                    </template>
-                </Column>
-                <Column field="due_date" header="Scadenza" />
-
-                <Column header="Azioni">
-    <template #body="{ data }">
-        <div class="flex gap-2">
-            <Link :href="`/tasks/${data.id}`">
-                <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
-            </Link>
-
-            <Link :href="`/tasks/${data.id}/edit`">
-                <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
-            </Link>
-
-            <Button
-                label="Elimina"
-                icon="pi pi-trash"
-                severity="danger"
-                size="small"
-                @click="destroyTask(data.id)"
-            />
+                <Link href="/tasks/create">
+                    <Button label="Inserisci nuova task" icon="pi pi-plus" />
+                </Link>
+            </div>
         </div>
-    </template>
-</Column>
 
+        <div v-if="tasks.length" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <Card
+                v-for="task in tasks"
+                :key="task.id"
+                class="h-full"
+            >
+                <template #title>
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="text-sm text-muted-foreground">
+                                {{ task.project?.name || 'Nessun progetto' }}
+                            </div>
+                            <div class="text-lg font-semibold">
+                                {{ task.title }}
+                            </div>
+                        </div>
+                    </div>
+                </template>
 
-            </DataTable>
+                <template #content>
+                    <div class="space-y-4">
+                        <p class="min-h-[72px] text-sm text-muted-foreground">
+                            {{ task.description || 'Nessuna descrizione disponibile.' }}
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            <Tag :value="task.status" :severity="statusSeverity(task.status)" />
+                            <Tag :value="task.priority" :severity="prioritySeverity(task.priority)" />
+                            <Tag
+                                v-if="task.due_date"
+                                :value="`Scadenza: ${task.due_date}`"
+                                severity="contrast"
+                            />
+                        </div>
+
+                        <div class="flex flex-wrap gap-2 pt-2">
+                            <Link :href="`/tasks/${task.id}`">
+                                <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
+                            </Link>
+
+                            <Link :href="`/tasks/${task.id}/edit`">
+                                <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
+                            </Link>
+
+                            <Button
+                                label="Elimina"
+                                icon="pi pi-trash"
+                                severity="danger"
+                                size="small"
+                                @click="destroyTask(task.id)"
+                            />
+                        </div>
+                    </div>
+                </template>
+            </Card>
         </div>
+
+        <Card v-else>
+            <template #content>
+                <div class="flex flex-col items-start gap-4">
+                    <p class="text-muted-foreground">
+                        Non ci sono ancora task inserite.
+                    </p>
+
+                    <Link href="/tasks/create">
+                        <Button label="Inserisci nuova task" icon="pi pi-plus" />
+                    </Link>
+                </div>
+            </template>
+        </Card>
     </div>
 </template>
