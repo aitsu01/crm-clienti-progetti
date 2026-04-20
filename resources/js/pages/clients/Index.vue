@@ -58,21 +58,31 @@ const typeSeverity = (type: string) => {
     <Head title="Clienti" />
 
     <div class="flex flex-1 flex-col gap-6 rounded-xl p-4">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold">Clienti</h1>
-                <p class="text-sm text-muted-foreground">
-                    Gestione anagrafica clienti e progetti assegnati
-                </p>
-            </div>
 
-            <Link href="/clients/create">
-                <Button label="Nuovo cliente" icon="pi pi-plus" />
-            </Link>
-        </div>
+
+        <div class="flex items-center justify-between">
+    <div>
+        <h1 class="text-2xl font-bold">Clienti</h1>
+        <p class="text-sm text-muted-foreground">
+            Gestione anagrafica clienti e progetti assegnati
+        </p>
+    </div>
+
+    <div class="flex gap-2">
+        <Link href="/dashboard">
+            <Button label="Dashboard" icon="pi pi-home" severity="secondary" />
+        </Link>
+
+        <Link href="/clients/create">
+            <Button label="Nuovo cliente" icon="pi pi-plus" />
+        </Link>
+    </div>
+</div>
+
+
 
         <div class="rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
-            <DataTable :value="clients" stripedRows paginator :rows="10">
+            <DataTable :value="clients" stripedRows paginator :rows="10" scrollable>
                 <Column field="full_name" header="Cliente" />
 
                 <Column header="Tipo">
@@ -104,27 +114,33 @@ const typeSeverity = (type: string) => {
                     </template>
                 </Column>
 
+
+
                 <Column header="Azioni">
-                    <template #body="{ data }">
-                        <div class="flex gap-2">
-                            <Link :href="`/clients/${data.id}`">
-                                <Button icon="pi pi-eye" severity="secondary" rounded text />
-                            </Link>
+    <template #body="{ data }">
+        <div class="flex gap-2">
+            <Link :href="`/clients/${data.id}`">
+                <Button label="Vedi" icon="pi pi-eye" severity="secondary" size="small" />
+            </Link>
 
-                            <Link :href="`/clients/${data.id}/edit`">
-                                <Button icon="pi pi-pencil" rounded text />
-                            </Link>
+            <Link :href="`/clients/${data.id}/edit`">
+                <Button label="Modifica" icon="pi pi-pencil" severity="info" size="small" />
+            </Link>
 
-                            <Button
-                                icon="pi pi-trash"
-                                severity="danger"
-                                rounded
-                                text
-                                @click="destroyClient(data.id)"
-                            />
-                        </div>
-                    </template>
-                </Column>
+            <Button
+                label="Elimina"
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                @click="destroyClient(data.id)"
+            />
+        </div>
+    </template>
+</Column>
+
+
+
+
             </DataTable>
         </div>
     </div>

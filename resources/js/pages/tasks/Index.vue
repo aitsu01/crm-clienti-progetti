@@ -71,16 +71,24 @@ const prioritySeverity = (priority: string) => {
     <Head title="Task" />
 
     <div class="flex flex-1 flex-col gap-6 rounded-xl p-4">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold">Task</h1>
-                <p class="text-sm text-muted-foreground">Gestione attività dei progetti</p>
-            </div>
 
-            <Link href="/tasks/create">
-                <Button label="Nuova task" icon="pi pi-plus" />
-            </Link>
-        </div>
+
+        <div class="flex items-center justify-between">
+    <div>
+        <h1 class="text-2xl font-bold">Task</h1>
+        <p class="text-sm text-muted-foreground">Gestione attività dei progetti</p>
+    </div>
+
+    <div class="flex gap-2">
+        <Link href="/dashboard">
+            <Button label="Dashboard" icon="pi pi-home" severity="secondary" />
+        </Link>
+
+        <Link href="/tasks/create">
+            <Button label="Nuova task" icon="pi pi-plus" />
+        </Link>
+    </div>
+</div>
 
         <div class="rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
             <DataTable :value="tasks" stripedRows paginator :rows="10">
