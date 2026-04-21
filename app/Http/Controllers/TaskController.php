@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
+
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -70,17 +73,23 @@ class TaskController extends Controller
     ]);
 }
 
-    public function store(Request $request)
-    {
-        $validated = $this->validateTask($request);
+   public function store(StoreTaskRequest $request)
+{
+    $validated = $request->validated();
 
-        Task::create($validated);
+    Task::create([
+        'project_id' => $validated['project_id'],
+        'title' => $validated['title'],
+        'description' => $validated['description'] ?? null,
+        'status' => $validated['status'],
+        'priority' => $validated['priority'],
+        'due_date' => $validated['due_date'] ?? null,
+    ]);
 
-        return redirect()
-            ->route('tasks.index')
-            ->with('success', 'Task creata con successo.');
-    }
-
+    return redirect()
+        ->route('tasks.index')
+        ->with('success', 'Task creata con successo.');
+}
     public function show(Task $task): Response
     {
         $task->load('project:id,name');
@@ -134,17 +143,23 @@ class TaskController extends Controller
         ]);
     }
 
-    public function update(Request $request, Task $task)
-    {
-        $validated = $this->validateTask($request);
+   public function update(UpdateTaskRequest $request, Task $task)
+{
+    $validated = $request->validated();
 
-        $task->update($validated);
+    $task->update([
+        'project_id' => $validated['project_id'],
+        'title' => $validated['title'],
+        'description' => $validated['description'] ?? null,
+        'status' => $validated['status'],
+        'priority' => $validated['priority'],
+        'due_date' => $validated['due_date'] ?? null,
+    ]);
 
-        return redirect()
-            ->route('tasks.index')
-            ->with('success', 'Task aggiornata con successo.');
-    }
-
+    return redirect()
+        ->route('tasks.index')
+        ->with('success', 'Task aggiornata con successo.');
+}
     public function destroy(Task $task)
     {
         $task->delete();
@@ -154,22 +169,7 @@ class TaskController extends Controller
             ->with('success', 'Task eliminata con successo.');
     }
 
-    private function validateTask(Request $request): array
-    {
-        return $request->validate([
-            'project_id' => ['required', 'integer', 'exists:projects,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'status' => ['required', Rule::in(['da_fare', 'in_corso', 'in_revisione', 'completata', 'bloccata'])],
-            'priority' => ['required', Rule::in(['bassa', 'media', 'alta'])],
-            'due_date' => ['nullable', 'date'],
-        ], [
-            'project_id.required' => 'Il progetto è obbligatorio.',
-            'title.required' => 'Il titolo della task è obbligatorio.',
-            'status.required' => 'Lo stato è obbligatorio.',
-            'priority.required' => 'La priorità è obbligatoria.',
-        ]);
-    }
+   
 
     public function updateStatus(Request $request, Task $task)
 {
