@@ -14,8 +14,8 @@ import { request } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Accedi',
+        description: 'Inserisci email e password per accedere al CRM',
     },
 });
 
@@ -27,13 +27,20 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Accedi" />
 
     <div
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-center text-sm font-medium text-green-700"
     >
         {{ status }}
+    </div>
+
+    <div class="mb-6 text-center">
+        <h1 class="text-2xl font-bold">Accedi al CRM</h1>
+        <p class="text-sm text-muted-foreground">
+            Inserisci le tue credenziali per continuare
+        </p>
     </div>
 
     <Form
@@ -44,7 +51,7 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">Email</Label>
                 <Input
                     id="email"
                     type="email"
@@ -53,7 +60,7 @@ defineProps<{
                     autofocus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    placeholder="nome@email.com"
                 />
                 <InputError :message="errors.email" />
             </div>
@@ -67,16 +74,17 @@ defineProps<{
                         class="text-sm"
                         :tabindex="5"
                     >
-                        Forgot password?
+                        Password dimenticata?
                     </TextLink>
                 </div>
+
                 <PasswordInput
                     id="password"
                     name="password"
                     required
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder="Inserisci la password"
                 />
                 <InputError :message="errors.password" />
             </div>
@@ -84,28 +92,30 @@ defineProps<{
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <span>Ricordami</span>
                 </Label>
             </div>
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="mt-2 w-full"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
             >
                 <Spinner v-if="processing" />
-                Log in
+                Accedi
             </Button>
         </div>
 
         <div
-            class="text-center text-sm text-muted-foreground"
             v-if="canRegister"
+            class="text-center text-sm text-muted-foreground"
         >
-            Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            Non hai ancora un account?
+            <TextLink :href="register()" :tabindex="5">
+                Registrati
+            </TextLink>
         </div>
     </Form>
 </template>
