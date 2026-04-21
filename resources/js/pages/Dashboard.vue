@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { dashboard } from '@/routes';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
@@ -57,6 +57,10 @@ defineOptions({
     },
 });
 
+const logout = () => {
+    router.post('/logout');
+};
+
 const statusSeverity = (status: string) => {
     switch (status) {
         case 'completato':
@@ -105,12 +109,30 @@ const prioritySeverity = (priority: string) => {
                     <Link href="/clients/create">
                         <Button label="Nuovo cliente" icon="pi pi-user-plus" />
                     </Link>
+
                     <Link href="/projects/create">
-                        <Button label="Nuovo progetto" icon="pi pi-briefcase" severity="secondary" />
+                        <Button
+                            label="Nuovo progetto"
+                            icon="pi pi-briefcase"
+                            severity="secondary"
+                        />
                     </Link>
+
                     <Link href="/tasks/create">
-                        <Button label="Nuova task" icon="pi pi-plus" severity="contrast" />
+                        <Button
+                            label="Nuova task"
+                            icon="pi pi-plus"
+                            severity="contrast"
+                        />
                     </Link>
+
+                    <Button
+                        label="Logout"
+                        icon="pi pi-sign-out"
+                        severity="danger"
+                        outlined
+                        @click="logout"
+                    />
                 </div>
             </div>
         </section>
@@ -168,13 +190,29 @@ const prioritySeverity = (priority: string) => {
                 <template #content>
                     <div class="flex flex-wrap gap-2">
                         <Link href="/clients/create">
-                            <Button label="Inserisci cliente" icon="pi pi-user-plus" size="small" />
+                            <Button
+                                label="Inserisci cliente"
+                                icon="pi pi-user-plus"
+                                size="small"
+                            />
                         </Link>
+
                         <Link href="/projects/create">
-                            <Button label="Crea progetto" icon="pi pi-briefcase" size="small" severity="secondary" />
+                            <Button
+                                label="Crea progetto"
+                                icon="pi pi-briefcase"
+                                size="small"
+                                severity="secondary"
+                            />
                         </Link>
+
                         <Link href="/tasks/create">
-                            <Button label="Aggiungi task" icon="pi pi-plus" size="small" severity="success" />
+                            <Button
+                                label="Aggiungi task"
+                                icon="pi pi-plus"
+                                size="small"
+                                severity="success"
+                            />
                         </Link>
                     </div>
                 </template>
@@ -187,9 +225,11 @@ const prioritySeverity = (priority: string) => {
                         <Link href="/clients">
                             <Button label="Vai ai clienti" size="small" outlined />
                         </Link>
+
                         <Link href="/projects">
                             <Button label="Vai ai progetti" size="small" outlined />
                         </Link>
+
                         <Link href="/tasks">
                             <Button label="Vai alle task" size="small" outlined />
                         </Link>
@@ -250,7 +290,10 @@ const prioritySeverity = (priority: string) => {
                             <div>
                                 <div class="font-medium">{{ project.name }}</div>
                                 <div class="mt-1 flex flex-wrap gap-2">
-                                    <Tag :value="project.status" :severity="statusSeverity(project.status)" />
+                                    <Tag
+                                        :value="project.status"
+                                        :severity="statusSeverity(project.status)"
+                                    />
                                 </div>
                             </div>
 
@@ -289,8 +332,14 @@ const prioritySeverity = (priority: string) => {
                             </div>
 
                             <div class="mt-3 flex flex-wrap gap-2">
-                                <Tag :value="task.status" :severity="statusSeverity(task.status)" />
-                                <Tag :value="task.priority" :severity="prioritySeverity(task.priority)" />
+                                <Tag
+                                    :value="task.status"
+                                    :severity="statusSeverity(task.status)"
+                                />
+                                <Tag
+                                    :value="task.priority"
+                                    :severity="prioritySeverity(task.priority)"
+                                />
                             </div>
                         </div>
                     </div>
