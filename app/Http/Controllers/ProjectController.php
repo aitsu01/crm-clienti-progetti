@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Project\StoreProjectRequest;
+use App\Http\Requests\Project\UpdateProjectRequest;
+
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -61,24 +64,24 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $this->validateProject($request);
+   public function store(StoreProjectRequest $request)
+{
+    $validated = $request->validated();
 
-        $project = Project::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'status' => $validated['status'],
-            'start_date' => $validated['start_date'] ?? null,
-            'end_date' => $validated['end_date'] ?? null,
-        ]);
+    $project = Project::create([
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'status' => $validated['status'],
+        'start_date' => $validated['start_date'],
+        'end_date' => $validated['end_date'] ?? null,
+    ]);
 
-        $project->clients()->sync($validated['client_ids'] ?? []);
+    $project->clients()->sync($validated['client_ids'] ?? []);
 
-        return redirect()
-            ->route('projects.index')
-            ->with('success', 'Progetto creato con successo.');
-    }
+    return redirect()
+        ->route('projects.index')
+        ->with('success', 'Progetto creato con successo.');
+}
 
     public function show(Project $project): Response
     {
@@ -151,26 +154,24 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(Request $request, Project $project)
-    {
-        /*$validated = $this->validateProject($request);*/
-        $validated = $this->validateProject($request, $project);
+    public function update(UpdateProjectRequest $request, Project $project)
+{
+    $validated = $request->validated();
 
-        $project->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'status' => $validated['status'],
-            'start_date' => $validated['start_date'] ?? null,
-            'end_date' => $validated['end_date'] ?? null,
-        ]);
+    $project->update([
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'status' => $validated['status'],
+        'start_date' => $validated['start_date'],
+        'end_date' => $validated['end_date'] ?? null,
+    ]);
 
-        $project->clients()->sync($validated['client_ids'] ?? []);
+    $project->clients()->sync($validated['client_ids'] ?? []);
 
-        return redirect()
-            ->route('projects.index')
-            ->with('success', 'Progetto aggiornato con successo.');
-    }
-
+    return redirect()
+        ->route('projects.index')
+        ->with('success', 'Progetto aggiornato con successo.');
+}
     public function destroy(Project $project)
     {
         $project->delete();
@@ -180,29 +181,6 @@ class ProjectController extends Controller
             ->with('success', 'Progetto eliminato con successo.');
     }
 
-    private function validateProject(Request $request, ?Project $project = null): array
-{
-    return $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('projects', 'name')->ignore($project?->id),
-        ],
-        'description' => ['nullable', 'string'],
-        'status' => ['required', Rule::in(['da_fare', 'in_corso', 'completato', 'sospeso'])],
-        'start_date' => ['required', 'date'],
-        'end_date' => ['nullable', 'date', 'after:start_date'],
-        'client_ids' => ['nullable', 'array'],
-        'client_ids.*' => ['integer', 'exists:clients,id'],
-    ], [
-        'name.required' => 'Il nome progetto è obbligatorio.',
-        'name.unique' => 'Esiste già un progetto con questo nome.',
-        'status.required' => 'Lo stato è obbligatorio.',
-        'start_date.required' => 'La data inizio è obbligatoria.',
-        'end_date.after' => 'La data fine deve essere successiva alla data inizio.',
-    ]);
-}
-
+   
    
 }
