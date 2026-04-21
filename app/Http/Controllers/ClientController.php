@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+
+
+use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\UpdateClientRequest;
+use App\Http\Requests\Client\SaveClientRequest;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+
+
+
 
 class ClientController extends Controller
 {
@@ -54,27 +62,26 @@ class ClientController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $this->validateClient($request);
+    public function store(StoreClientRequest $request)
+{
+    $validated = $request->validated();
 
-        $client = Client::create([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'type' => $validated['type'],
-            'vat_number' => $validated['vat_number'] ?? null,
-            'tax_code' => $validated['tax_code'] ?? null,
-            'address' => $validated['address'] ?? null,
-            'email' => $validated['email'] ?? null,
-        ]);
+    $client = Client::create([
+        'first_name' => $validated['first_name'],
+        'last_name' => $validated['last_name'],
+        'type' => $validated['type'],
+        'vat_number' => $validated['vat_number'] ?? null,
+        'tax_code' => $validated['tax_code'] ?? null,
+        'address' => $validated['address'] ?? null,
+        'email' => $validated['email'] ?? null,
+    ]);
 
-        $client->projects()->sync($validated['project_ids'] ?? []);
+    $client->projects()->sync($validated['project_ids'] ?? []);
 
-        return redirect()
-            ->route('clients.index')
-            ->with('success', 'Cliente creato con successo.');
-    }
-
+    return redirect()
+        ->route('clients.index')
+        ->with('success', 'Cliente creato con successo.');
+}
     public function show(Client $client): Response
     {
         $client->load('projects:id,name,status');
@@ -128,27 +135,26 @@ class ClientController extends Controller
         ]);
     }
 
-    public function update(Request $request, Client $client)
-    {
-        $validated = $this->validateClient($request);
+    public function update(UpdateClientRequest $request, Client $client)
+{
+    $validated = $request->validated();
 
-        $client->update([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'type' => $validated['type'],
-            'vat_number' => $validated['vat_number'] ?? null,
-            'tax_code' => $validated['tax_code'] ?? null,
-            'address' => $validated['address'] ?? null,
-            'email' => $validated['email'] ?? null,
-        ]);
+    $client->update([
+        'first_name' => $validated['first_name'],
+        'last_name' => $validated['last_name'],
+        'type' => $validated['type'],
+        'vat_number' => $validated['vat_number'] ?? null,
+        'tax_code' => $validated['tax_code'] ?? null,
+        'address' => $validated['address'] ?? null,
+        'email' => $validated['email'] ?? null,
+    ]);
 
-        $client->projects()->sync($validated['project_ids'] ?? []);
+    $client->projects()->sync($validated['project_ids'] ?? []);
 
-        return redirect()
-            ->route('clients.index')
-            ->with('success', 'Cliente aggiornato con successo.');
-    }
-
+    return redirect()
+        ->route('clients.index')
+        ->with('success', 'Cliente aggiornato con successo.');
+}
     public function destroy(Client $client)
     {
         $client->delete();
@@ -158,47 +164,5 @@ class ClientController extends Controller
             ->with('success', 'Cliente eliminato con successo.');
     }
 
-    private function validateClient(Request $request): array
-{
-    return $request->validate([
-        'first_name' => ['required', 'string', 'max:255'],
-        'last_name' => ['required', 'string', 'max:255'],
-        'type' => ['required', Rule::in(['privato', 'azienda'])],
-
-        'vat_number' => [
-            'nullable',
-            'string',
-            'regex:/^[0-9]{11}$/',
-            Rule::requiredIf(fn () => $request->input('type') === 'azienda'),
-        ],
-
-        'tax_code' => [
-            'nullable',
-            'string',
-            'size:16',
-            'regex:/^[A-Z0-9]{16}$/i',
-            Rule::requiredIf(fn () => $request->input('type') === 'privato'),
-        ],
-
-        'address' => ['nullable', 'string', 'max:255'],
-        'email' => ['nullable', 'email', 'max:255'],
-        'project_ids' => ['nullable', 'array'],
-        'project_ids.*' => ['integer', 'exists:projects,id'],
-    ], [
-        'first_name.required' => 'Il nome è obbligatorio.',
-        'last_name.required' => 'Il cognome è obbligatorio.',
-        'type.required' => 'Il tipo cliente è obbligatorio.',
-        'type.in' => 'Il tipo cliente selezionato non è valido.',
-
-        'vat_number.required' => 'La partita IVA è obbligatoria per un cliente azienda.',
-        'vat_number.regex' => 'La partita IVA deve contenere esattamente 11 cifre numeriche.',
-
-        'tax_code.required' => 'Il codice fiscale è obbligatorio per un cliente privato.',
-        'tax_code.size' => 'Il codice fiscale deve essere lungo 16 caratteri.',
-        'tax_code.regex' => 'Il codice fiscale non ha un formato valido.',
-
-        'email.email' => 'Inserisci un indirizzo email valido.',
-        'project_ids.*.exists' => 'Uno dei progetti selezionati non esiste.',
-    ]);
-}
+    
 }
