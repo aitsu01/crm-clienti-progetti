@@ -12,14 +12,21 @@ import { store } from '@/routes/register';
 
 defineOptions({
     layout: {
-        title: 'Create an account',
-        description: 'Enter your details below to create your account',
+        title: 'Registrazione',
+        description: 'Inserisci i tuoi dati per creare un account',
     },
 });
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="Registrazione" />
+
+    <div class="mb-6 text-center">
+        <h1 class="text-2xl font-bold">Crea un account</h1>
+        <p class="text-sm text-muted-foreground">
+            Registrati per accedere al CRM
+        </p>
+    </div>
 
     <Form
         v-bind="store.form()"
@@ -29,7 +36,7 @@ defineOptions({
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="name">Name</Label>
+                <Label for="name">Nome</Label>
                 <Input
                     id="name"
                     type="text"
@@ -38,13 +45,13 @@ defineOptions({
                     :tabindex="1"
                     autocomplete="name"
                     name="name"
-                    placeholder="Full name"
+                    placeholder="Nome completo"
                 />
                 <InputError :message="errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">Email</Label>
                 <Input
                     id="email"
                     type="email"
@@ -52,7 +59,7 @@ defineOptions({
                     :tabindex="2"
                     autocomplete="email"
                     name="email"
-                    placeholder="email@example.com"
+                    placeholder="nome@email.com"
                 />
                 <InputError :message="errors.email" />
             </div>
@@ -65,20 +72,20 @@ defineOptions({
                     :tabindex="3"
                     autocomplete="new-password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Inserisci la password"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation">Confirm password</Label>
+                <Label for="password_confirmation">Conferma password</Label>
                 <PasswordInput
                     id="password_confirmation"
                     required
                     :tabindex="4"
                     autocomplete="new-password"
                     name="password_confirmation"
-                    placeholder="Confirm password"
+                    placeholder="Conferma la password"
                 />
                 <InputError :message="errors.password_confirmation" />
             </div>
@@ -91,18 +98,19 @@ defineOptions({
                 data-test="register-user-button"
             >
                 <Spinner v-if="processing" />
-                Create account
+                Crea account
             </Button>
         </div>
 
         <div class="text-center text-sm text-muted-foreground">
-            Already have an account?
+            Hai già un account?
             <TextLink
                 :href="login()"
                 class="underline underline-offset-4"
                 :tabindex="6"
-                >Log in</TextLink
             >
+                Accedi
+            </TextLink>
         </div>
     </Form>
 </template>
